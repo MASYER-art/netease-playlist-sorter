@@ -5,29 +5,50 @@
 
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
+![release](https://img.shields.io/github/v/release/MASYER-art/netease-playlist-sorter)
 
 > 用的是网页版私有接口，不是官方开放平台。只操作自己的账号，注意频率。
 
 ---
 
-## 第一步：把这段话粘给 DSH（安装）
+## 下载
 
-新建一个 DSH 会话，把下面整段复制进对话框：
+不想碰命令行的话，直接去 **[Releases](https://github.com/MASYER-art/netease-playlist-sorter/releases/latest)** 下：
+
+| 文件 | 大小 | 用法 |
+|---|---|---|
+| `netease-sorter-portable-win64.zip` | 约 11 MB | 解压 → 双击 `启动网页.bat`（推荐） |
+| `NeteaseSorter.exe` | 约 18 MB | 双击即用；被 SmartScreen 拦时点「更多信息 → 仍要运行」 |
+
+两个都**不需要安装 Python**，只支持 Windows 64 位。下面是从零开始的完整流程。
+
+---
+
+## 第一步：拿到并启动
+
+### 方式 A：免安装包（推荐）
+
+1. 从 **[Releases](https://github.com/MASYER-art/netease-playlist-sorter/releases/latest)** 下载 `netease-sorter-portable-win64.zip`；
+2. 解压到任意目录（别放 `C:\Program Files`，权限麻烦）；
+3. 双击 **`启动网页.bat`**，浏览器会自动打开 `http://127.0.0.1:8765/`。
+
+那个黑色命令行窗口别关，关掉服务就停了。
+
+### 方式 B：源码 + DSH
+
+已经有 Python 3.9+ 的话，也可以让 DSH 带你装。新建会话，把下面整段粘进对话框：
 
 ```text
 帮我安装网易云歌单整理器：https://github.com/MASYER-art/netease-playlist-sorter
-按它的 README 操作：从 Releases 里下载最新的源码包，或者 git clone 这个仓库，
-放到 G:\github\netease-playlist-sorter；在这个目录里执行 pip install -e ".[edge]"，
-然后运行 netease-sorter serve，它会把网页开在 http://127.0.0.1:8765/。
-如果 Windows 弹防火墙提示，允许「专用网络」。装好后告诉我下一步怎么做。
+按它的 README 操作：git clone 仓库，放到 G:\github\netease-playlist-sorter；
+在这个目录里执行 pip install -e ".[edge]"，然后运行 netease-sorter serve，
+它会把网页开在 http://127.0.0.1:8765/。装好后告诉我下一步怎么做。
 ```
-
-DSH 会自己下载、安装依赖、启动网页，然后把地址发你。之后扫码登录、选歌单、写歌单都可以让它带着做，你不用记命令。
 
 > DSH 是一个能读写文件、执行命令的编码智能体，跑在你自己的机器上。
 > 登录态和歌单数据都留在本地，不会上传到任何地方。
 
-不想用 DSH 的话，等价于手动执行：
+等价的手动命令：
 
 ```bash
 git clone https://github.com/MASYER-art/netease-playlist-sorter.git
@@ -43,7 +64,7 @@ netease-sorter serve
 不登录也能用：网页可以加载歌单、按语种/曲风筛选、导出 CSV、生成 Console 脚本。
 **只有「直接写入账号」和「我喜欢的音乐」需要登录态。**
 
-最省事的方式，命令行执行一次：
+用免安装包的话，双击 **`登录网易云.bat`**；用源码的话，命令行执行一次：
 
 ```bash
 netease-sorter login --from-edge
@@ -94,20 +115,10 @@ netease-sorter login --cookie "MUSIC_U=xxxxx"
 | 方式 | 适合谁 | 需要什么 |
 |---|---|---|
 | **免安装版** | 完全不想碰命令行 | 下载 Release 里的包，双击 |
-| **DSH**（上面） | 想让人带着做 | 装好 DSH |
+| **源码 + DSH** | 想让人带着做 | 装好 DSH |
 | **网页 / 命令行** | 想自己改、自己跑 | Python 3.9+ |
 
-### 免安装版（Windows 64 位）
-
-去 [Releases](https://github.com/MASYER-art/netease-playlist-sorter/releases) 下载：
-
-- **`netease-sorter-portable-win64.zip`**（推荐）：解压到任意目录，双击 **`启动网页.bat`**；
-- **`NeteaseSorter.exe`**：单文件，双击即用；被 SmartScreen 拦时点「更多信息 → 仍要运行」。
-
-两种都不需要装 Python。想写歌单就再双击 **`登录网易云.bat`** 扫码一次。
-
-> 便携包里已经带了 `runtime/`（嵌入式 Python + 依赖）；exe 每次启动会解压到临时目录，
-> 所以略慢一点，也更容易被杀软误报——被拦时用 zip 版。
+> 免安装版的下载和启动见上面「第一步」；下面主要说源码方式。
 
 ### 网页界面
 
@@ -159,19 +170,15 @@ netease-sorter create                # 四类全写
 
 ---
 
-## 手动安装
+## 依赖说明
 
-```bash
-git clone https://github.com/MASYER-art/netease-playlist-sorter.git
-cd netease-playlist-sorter
-pip install -e ".[edge]"
-```
+源码方式需要 **Python 3.9+**（推荐 3.10~3.12）。
 
 - 硬依赖只有 `requests`；
 - `[edge]` 装上 `websockets`，`login --from-edge` 要用；
 - 想用接口扫码登录（容易被风控）再装 `.[qr]`。
 
-不想安装也能直接跑：
+不安装也能直接跑源码：
 
 ```bash
 PYTHONPATH=src python -m netease_sorter --help

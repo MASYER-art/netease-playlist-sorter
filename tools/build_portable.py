@@ -44,25 +44,37 @@ MIRRORS = {
     "tuna": "https://pypi.tuna.tsinghua.edu.cn/pypi/{}/json",
 }
 
-LAUNCH_BAT = """@echo off
+LAUNCH_BAT = r"""@echo off
 chcp 65001 >nul
 title 网易云歌单整理器
 cd /d "%~dp0"
+if not exist "%~dp0runtime\python\python.exe" (
+  echo [缺少 runtime] 这个仓库没有内置运行环境。
+  echo 请从 Releases 下载便携包，或在项目目录运行：python tools\build_portable.py
+  pause
+  exit /b 1
+)
 echo 正在启动，浏览器会自动打开 http://127.0.0.1:8765/
 echo 关闭本窗口即可停止服务。
 echo.
-"%~dp0runtime\\python\\python.exe" -m netease_sorter serve %*
+"%~dp0runtime\python\python.exe" -m netease_sorter serve %*
 pause
 """
 
-LOGIN_BAT = """@echo off
+LOGIN_BAT = r"""@echo off
 chcp 65001 >nul
 title 登录网易云
 cd /d "%~dp0"
+if not exist "%~dp0runtime\python\python.exe" (
+  echo [缺少 runtime] 这个仓库没有内置运行环境。
+  echo 请从 Releases 下载便携包，或在项目目录运行：python tools\build_portable.py
+  pause
+  exit /b 1
+)
 echo 会打开一个专用 Edge 窗口，请用网易云 App 扫码登录。
 echo 登录成功后窗口会自动关闭。
 echo.
-"%~dp0runtime\\python\\python.exe" -m netease_sorter login --from-edge %*
+"%~dp0runtime\python\python.exe" -m netease_sorter login --from-edge %*
 pause
 """
 
@@ -140,7 +152,7 @@ def build_zip() -> Path:
             if not path.is_file():
                 continue
             rel = path.relative_to(ROOT)
-            if set(rel.parts) & skip or path.suffix in {".pyc"}:
+            if set(rel.parts) & skip or path.suffix in {".pyc", ".spec"}:
                 continue
             zf.write(path, rel.as_posix())
     print(f"便携包：{target}（{target.stat().st_size / 1048576:.1f} MB）")

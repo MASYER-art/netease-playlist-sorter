@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>网易云歌单分类台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>网易云歌单分类台</h1>
+    <p class="sub" id="sub">加载中…</p>
+    <p class="account" id="account"></p>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<main>
+  <details class="card tutorial" id="tutorial">
+    <summary>
+      <span class="t-title">使用教程</span>
+      <span class="t-sub">从登录网易云到生成歌单，8 步 · 点开 / 收起</span>
+    </summary>
+
+    <ol class="steps">
+      <li>
+        <b>登录网易云网页版</b>
+        <p>新开一个标签页打开 <a href="https://music.163.com/" target="_blank" rel="noreferrer">music.163.com</a>，点右上角「登录」，扫码或手机号都行。
+        这个标签页先别关，第 7 步还要用它执行脚本。</p>
+      </li>
+      <li>
+        <b>复制歌单链接</b>
+        <p>进入想整理的歌单页面，点右上角「分享」→「复制链接」，会得到形如
+        <code>https://music.163.com/playlist?id=123456789</code> 的地址。</p>
+        <p class="tip">只支持<strong>公开歌单</strong>。私密歌单和「我喜欢的音乐」需要登录态，得用命令行的
+        <code>fetch --liked</code>。</p>
+      </li>
+      <li>
+        <b>粘贴到上方输入框并加载</b>
+        <p>把链接贴进「粘贴歌单链接或 id」的框里，点「加载歌单」。进度条会依次显示
+        「获取详情 → 拉取歌词 300/1200 → 分类中」。几千首大概 1~3 分钟，期间页面可以正常滚动。</p>
+      </li>
+      <li>
+        <b>核对分类</b>
+        <p>「语种」和「曲风」都可以多选：同一种里选多个是「或」，语种和曲风之间是「且」。
+        再用搜索框找具体某首；勾上「只看待复核」可以专门检查置信度低的歌，判错的直接不选它就行。</p>
+      </li>
+      <li>
+        <b>选出要的歌</b>
+        <p>点行首勾选框单选，或者点「全选筛选结果」把当前筛选到的全选上。
+        顶部会实时显示「已选 N 首」；选中的行是浅红底色。</p>
+      </li>
+      <li>
+        <b>生成歌单</b>
+        <p>点「生成写入脚本」，弹窗里可以改歌单名（默认按你当前的筛选命名，比如「我的歌单 · 日语 · 二次元」）。</p>
+        <p>如果命令行里登录过（<code>netease-sorter login --from-edge</code>），页面顶部会显示「已登录」，
+        直接点<strong>「直接写入账号」</strong>就行——进度会显示在弹窗里，完成后给出歌单链接，可以直接跳到第 8 步。</p>
+        <p class="tip">没有登录态时才需要往下走第 7 步：复制弹窗里的脚本，到网易云页面执行。
+        弹窗里的脚本会自己查重：同名歌单已存在时会问你要不要继续，不会悄悄建重复的。</p>
+      </li>
+      <li>
+        <b>（可选）回到网易云页面执行脚本</b>
+        <p>切到第 1 步那个已登录的网易云标签页，按 <kbd>F12</kbd> 打开开发者工具，切到
+        <strong>Console（控制台）</strong>。</p>
+        <p>第一次粘贴代码时浏览器会拦，提示 <code>Don't paste code…</code>，按提示手动输入
+        <code>allow pasting</code> 再回车。</p>
+        <p>然后把脚本粘到最下面的输入框，回车。</p>
+      </li>
+      <li>
+        <b>查看结果</b>
+        <p>如果是「直接写入账号」，弹窗会显示「完成：《歌单名》现有 N 首」并给出「打开歌单」链接。</p>
+        <p>如果是脚本方式，控制台会依次打印「已创建《…》→ 第 1 批 100 首 OK → … → 完成，共 N 首」，
+        每批之间隔 1 秒左右，几千首要几分钟，别关标签页。</p>
+        <p>两种方式建出来的歌单默认都是<strong>私密</strong>，去网易云「我的歌单」能看到，想公开在客户端里改一下。</p>
+      </li>
+    </ol>
+
+    <div class="trouble">
+      <b>卡住了？</b>
+      <ul>
+        <li>进度条变红显示「解析不出歌单 id」→ 链接不完整，确认里面带 <code>?id=</code> 和数字。</li>
+        <li>加载出来是空的 → 歌单是私密的，换成公开歌单。</li>
+        <li>控制台显示「创建失败」→ 把那段红字连同歌单链接发我，多半是接口参数变了。</li>
+        <li>写了重复的歌 → 删掉新歌单，或在弹窗里把歌单名改成新的。</li>
+        <li>不想用浏览器执行 → 命令行 <code>netease-sorter create</code>，见项目 README。</li>
+      </ul>
+    </div>
+  </details>
+
+  <section class="card loader">
+    <div class="loadrow">
+      <input id="playlistUrl" type="text" placeholder="粘贴歌单链接或 id，例如 https://music.163.com/playlist?id=3778678" autocomplete="off">
+      <button class="primary" id="loadBtn" type="button">加载歌单</button>
+    </div>
+    <div class="progress" id="progress" hidden>
+      <div class="bar"><i id="bar"></i></div>
+      <span id="progressText"></span>
+    </div>
+    <p class="hint">公开歌单不需要登录。加载会替换当前数据（约 1~2 分钟，几千首时）。</p>
+  </section>
+
+  <section class="card filters">
+    <div class="field">
+      <label for="q">搜索</label>
+      <input id="q" type="search" placeholder="歌名 / 歌手 / 专辑" autocomplete="off">
+    </div>
+
+    <div class="group">
+      <span class="label">语种 <em>可多选</em></span>
+      <div class="chips" id="langChips"></div>
+    </div>
+
+    <div class="group">
+      <span class="label">曲风 <em>可多选</em></span>
+      <div class="chips" id="genreChips"></div>
+    </div>
+
+    <div class="group inline">
+      <label class="check"><input type="checkbox" id="reviewOnly"> 只看待复核（low / mid）</label>
+      <button class="ghost" id="reset" type="button">重置筛选</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="toolbar">
+      <div class="count" id="count">—</div>
+      <div class="actions">
+        <button class="ghost" id="selectAll" type="button">全选筛选结果</button>
+        <button class="ghost" id="clearSel" type="button">清空选择</button>
+        <button class="ghost" id="exportCsv" type="button">导出 CSV</button>
+        <button class="primary" id="makeScript" type="button">生成歌单</button>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="pick"></th>
+            <th>歌名</th>
+            <th>歌手</th>
+            <th>专辑</th>
+            <th>语种</th>
+            <th>曲风</th>
+            <th>置信度</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <button class="ghost" id="prev" type="button">上一页</button>
+      <span id="pageInfo"></span>
+      <button class="ghost" id="next" type="button">下一页</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="modal">
+  <div class="modal">
+    <h2>生成歌单</h2>
+    <p class="hint" id="modalHint"></p>
+    <label class="inline-field">歌单名 <input id="playlistName" value="我的歌单"></label>
+    <label class="check"><input type="checkbox" id="appendMode"> 追加到已存在的同名歌单（默认拒绝覆盖）</label>
+
+    <div class="modal-actions">
+      <button class="primary" id="directWrite" type="button">直接写入账号</button>
+      <button class="ghost" id="copyScript" type="button">复制脚本</button>
+      <button class="ghost" id="downloadScript" type="button">下载 .js</button>
+      <button class="ghost" id="closeModal" type="button">关闭</button>
+    </div>
+
+    <p class="write-status" id="writeStatus" hidden></p>
+
+    <details class="script-box">
+      <summary>展开 Console 脚本（没有登录态时用这个）</summary>
+      <textarea id="scriptOut" readonly rows="10" spellcheck="false"></textarea>
+    </details>
+  </div>
+</dialog>
+
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netease-playlist-sorter"
+version = "0.3.0"
+description = "把网易云歌单 / 我喜欢的音乐按语种（中文 / 英文 / 日语 / 纯音乐）自动拆分"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["netease", "music", "playlist", "classifier", "中文", "网易云"]
+dependencies = ["requests>=2.28"]
+
+[project.optional-dependencies]
+qr = ["qrcode[pil]>=7.4"]
+edge = ["websockets>=12"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+netease-sorter = "netease_sorter.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+netease_sorter = ["web/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

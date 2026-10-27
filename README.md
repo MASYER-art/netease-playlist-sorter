@@ -6,18 +6,33 @@
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-**仓库地址**：<https://github.com/MASYER-art/netease-playlist-sorter>
-
 > 用的是网页版私有接口，不是官方开放平台。只操作自己的账号，注意频率。
 
 ---
 
-## 第一步：用 DSH 打开这个项目（推荐）
+## 第一步：打开仓库地址
 
-不用记命令，让 DSH 帮你跑：
+```
+https://github.com/MASYER-art/netease-playlist-sorter
+```
+
+拿到代码，二选一：
+
+```bash
+# 会用 git
+git clone https://github.com/MASYER-art/netease-playlist-sorter.git
+```
+
+或者在仓库页面点绿色的 **Code → Download ZIP**，解压到任意目录。
+
+---
+
+## 第二步：用 DSH 打开这个项目（推荐）
+
+拿到代码后，不用记命令，让 DSH 帮你跑：
 
 1. 启动 **DSH（DeepSeek Harness）**，打开它的 Web 界面，新建一个会话；
-2. 把**本仓库所在目录**设为这次会话的工作区（例如 `D:\code\netease-playlist-sorter`）；
+2. 把**刚才 clone / 解压出来的目录**设为这次会话的工作区；
 3. 在对话框里直接粘贴这句话：
 
    ```

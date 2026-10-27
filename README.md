@@ -115,7 +115,7 @@ netease-sorter create                # 四类全写
 ## 手动安装
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_NAME/netease-playlist-sorter.git
+git clone https://github.com/MASYER-art/netease-playlist-sorter.git
 cd netease-playlist-sorter
 pip install -e ".[edge]"
 ```

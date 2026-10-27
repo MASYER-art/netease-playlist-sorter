@@ -6,6 +6,8 @@
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
+**仓库地址**：<https://github.com/MASYER-art/netease-playlist-sorter>
+
 > 用的是网页版私有接口，不是官方开放平台。只操作自己的账号，注意频率。
 
 ---

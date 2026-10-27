@@ -15,6 +15,12 @@ dist/
 *.egg-info/
 .pytest_cache/
 
+# 构建产物：本地有、仓库没有（随 Release 发）
+runtime/
+release/
+*.exe
+*.spec
+
 # 编辑器
 .vscode/
 .idea/

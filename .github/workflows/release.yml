@@ -1,0 +1,37 @@
+name: release assets
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装构建依赖
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install requests pyinstaller
+
+      - name: 构建免安装运行时 + 便携包
+        run: python tools/build_portable.py --mirror pypi --zip
+
+      - name: 构建单文件 exe
+        run: python tools/build_exe.py
+
+      - name: 上传到 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/netease-sorter-portable-win64.zip
+            release/NeteaseSorter.exe
+          generate_release_notes: true

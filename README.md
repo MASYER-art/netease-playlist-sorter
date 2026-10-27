@@ -93,9 +93,21 @@ netease-sorter login --cookie "MUSIC_U=xxxxx"
 
 | 方式 | 适合谁 | 需要什么 |
 |---|---|---|
-| **DSH**（上面） | 不想碰命令行 | 装好 DSH |
-| **网页界面** | 想自己点、自己看 | `netease-sorter serve` |
-| **命令行** | 想脚本化 / 定时跑 | `login` + `create` |
+| **免安装版** | 完全不想碰命令行 | 下载 Release 里的包，双击 |
+| **DSH**（上面） | 想让人带着做 | 装好 DSH |
+| **网页 / 命令行** | 想自己改、自己跑 | Python 3.9+ |
+
+### 免安装版（Windows 64 位）
+
+去 [Releases](https://github.com/MASYER-art/netease-playlist-sorter/releases) 下载：
+
+- **`netease-sorter-portable-win64.zip`**（推荐）：解压到任意目录，双击 **`启动网页.bat`**；
+- **`NeteaseSorter.exe`**：单文件，双击即用；被 SmartScreen 拦时点「更多信息 → 仍要运行」。
+
+两种都不需要装 Python。想写歌单就再双击 **`登录网易云.bat`** 扫码一次。
+
+> 便携包里已经带了 `runtime/`（嵌入式 Python + 依赖）；exe 每次启动会解压到临时目录，
+> 所以略慢一点，也更容易被杀软误报——被拦时用 zip 版。
 
 ### 网页界面
 
@@ -272,6 +284,11 @@ netease-sorter serve --port 8800                        # 换端口
 ## 项目结构
 
 ```
+启动网页.bat          # 便携版入口（由 tools/build_portable.py 生成）
+登录网易云.bat        # 便携版登录入口
+使用说明.txt          # 给不折腾的人看的说明
+runtime/              # 嵌入式 Python + 依赖（构建产物，不进 git）
+release/              # zip / exe 产物（不进 git）
 src/netease_sorter/
 ├── api.py        # 接口封装（请求、重试、歌单读写）
 ├── browser.py    # 专用 Edge 窗口 + 调试端口取 Cookie
@@ -284,6 +301,10 @@ src/netease_sorter/
 ├── server.py     # 本地网页服务（标准库 http.server）
 ├── web/          # index.html / style.css / app.js，无框架无构建
 └── cli.py        # 命令行
+tools/
+├── build_portable.py   # 生成 runtime/ + 两个 bat + 便携包 zip
+├── build_exe.py        # PyInstaller 单文件 exe
+└── launcher.py         # exe 入口（无参数时启动网页）
 tests/
 ├── test_classify.py   # 10 个用例
 ├── test_genres.py     # 9 个用例
@@ -297,6 +318,29 @@ python tests/test_classify.py
 python tests/test_genres.py
 python tests/test_target.py
 ```
+
+---
+
+## 打包发布（维护者）
+
+```bash
+# 生成 runtime/、两个 bat，并打出 release/netease-sorter-portable-win64.zip
+python tools/build_portable.py --zip
+
+# 打单文件 exe（需要 pip install pyinstaller）
+python tools/build_exe.py
+```
+
+`runtime/`、`release/`、`*.exe` 都在 `.gitignore` 里——**本地有、仓库没有**，随 Release 附件发。
+
+发布新版本时只需要打 tag，GitHub Actions 会自动构建两个产物并挂到 Release：
+
+```bash
+git tag v0.3.1
+git push origin v0.3.1
+```
+
+工作流在 `.github/workflows/release.yml`，另有 `ci.yml` 在每次 push 时跑那三组测试。
 
 ---
 

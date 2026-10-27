@@ -28,6 +28,19 @@
 
 ### 方式 A：免安装包（推荐）
 
+不用装 Python。可以把下面整段粘给 DSH，让它下载、解压、启动：
+
+```text
+帮我装好网易云歌单整理器：https://github.com/MASYER-art/netease-playlist-sorter
+按它 README 的「方式 A」操作：从 Releases 下载最新的 netease-sorter-portable-win64.zip，
+解压到 G:\github\netease-playlist-sorter；双击里面的「启动网页.bat」，
+它会把网页开在 http://127.0.0.1:8765/。
+如果 Windows 弹防火墙提示，允许「专用网络」。
+启动后帮我确认页面能打开，然后告诉我下一步怎么做。
+```
+
+不想用 DSH 就手动三步：
+
 1. 从 **[Releases](https://github.com/MASYER-art/netease-playlist-sorter/releases/latest)** 下载 `netease-sorter-portable-win64.zip`；
 2. 解压到任意目录（别放 `C:\Program Files`，权限麻烦）；
 3. 双击 **`启动网页.bat`**，浏览器会自动打开 `http://127.0.0.1:8765/`。

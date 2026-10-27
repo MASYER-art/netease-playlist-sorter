@@ -10,44 +10,62 @@
 
 ---
 
-## 第一步：打开仓库地址
+## 第一步：把这段话粘给 DSH（安装）
 
-```
-https://github.com/MASYER-art/netease-playlist-sorter
+新建一个 DSH 会话，把下面整段复制进对话框：
+
+```text
+帮我安装网易云歌单整理器：https://github.com/MASYER-art/netease-playlist-sorter
+按它的 README 操作：从 Releases 里下载最新的源码包，或者 git clone 这个仓库，
+放到 G:\github\netease-playlist-sorter；在这个目录里执行 pip install -e ".[edge]"，
+然后运行 netease-sorter serve，它会把网页开在 http://127.0.0.1:8765/。
+如果 Windows 弹防火墙提示，允许「专用网络」。装好后告诉我下一步怎么做。
 ```
 
-拿到代码，二选一：
+DSH 会自己下载、安装依赖、启动网页，然后把地址发你。之后扫码登录、选歌单、写歌单都可以让它带着做，你不用记命令。
+
+> DSH 是一个能读写文件、执行命令的编码智能体，跑在你自己的机器上。
+> 登录态和歌单数据都留在本地，不会上传到任何地方。
+
+不想用 DSH 的话，等价于手动执行：
 
 ```bash
-# 会用 git
 git clone https://github.com/MASYER-art/netease-playlist-sorter.git
+cd netease-playlist-sorter
+pip install -e ".[edge]"
+netease-sorter serve
 ```
-
-或者在仓库页面点绿色的 **Code → Download ZIP**，解压到任意目录。
 
 ---
 
-## 第二步：用 DSH 打开这个项目（推荐）
+## 第二步：拿到登录态
 
-拿到代码后，不用记命令，让 DSH 帮你跑：
+不登录也能用：网页可以加载歌单、按语种/曲风筛选、导出 CSV、生成 Console 脚本。
+**只有「直接写入账号」和「我喜欢的音乐」需要登录态。**
 
-1. 启动 **DSH（DeepSeek Harness）**，打开它的 Web 界面，新建一个会话；
-2. 把**刚才 clone / 解压出来的目录**设为这次会话的工作区；
-3. 在对话框里直接粘贴这句话：
+最省事的方式，命令行执行一次：
 
-   ```
-   读一下 README，帮我把这个项目装好并启动网页：
-   pip install -e ".[edge]" 然后 netease-sorter serve，
-   起好之后把地址发我，再带我走一遍「登录 → 粘贴歌单链接 → 筛选 → 写歌单」。
-   ```
+```bash
+netease-sorter login --from-edge
+```
 
-4. DSH 会依次执行安装、启动 `serve`、把 `http://127.0.0.1:8765/` 发给你；
-   后面扫码登录、选歌单、写歌单都可以让它带着做，你不用自己敲命令。
+它会用**工具专用的浏览器配置**启动一个 Edge 窗口，你扫码登录后自动把 Cookie 读回来，存进 `data/session.json`。
 
-> DSH 是一个能读写文件、执行命令、联网查资料的编码智能体，跑在你自己的机器上。
-> 登录态和歌单数据都留在本地，不会上传到任何地方。
+- 之后网页顶部会显示「已登录：昵称」，筛选完点「直接写入账号」就能建歌单；
+- 第一次要单独登一次，之后 `login --from-edge` 秒回，登录态失效时会重新等你扫码；
+- 这个配置目录 `data/edge-profile/` 和你日常用的 Edge 完全隔离，不影响你的书签和登录；
+- 想让 DSH 帮你走完这一步，直接说：`运行 netease-sorter login --from-edge，等我扫码`。
 
-不想用 DSH 就跳到 [手动安装](#手动安装)，后面的流程是一样的。
+没有 Edge，或者端口被占用时，可以手工提供 Cookie：
+
+```bash
+netease-sorter login --cookie "MUSIC_U=xxxxx"
+```
+
+> `MUSIC_U` 等价于账号凭证：只填在本地，不要发给任何人，也不要提交进 git
+> （`data/`、`session.json`、`edge-profile*/` 都已在 `.gitignore` 里）。
+
+登录态存好之后，回到网页刷新一下，就可以「筛选 → 生成歌单 → 直接写入账号」了。
 
 ---
 
